@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,24 +17,86 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSonner } from "sonner";
 
 export default function Home() {
+  const [prompt, setPrompt] = useState("");
+  const [guidance, setGuidance] = useState(7.5);
+  const [image, setImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const generateImage = async () => {
+    setLoading(true);
+    // Simulate image generation
+    setTimeout(() => {
+      setImage("https://placekitten.com/512/512"); // Replace with actual API response
+      setLoading(false);
+    }, 2000);
+  };
+
   return (
-    <div>
-      <Card className="w-full max-w-sm">
+    <div className="min-h-screen bg-background text-foreground px-4 py-10 flex flex-col items-center gap-10">
+      <Card className="w-full max-w-2xl shadow-lg border rounded-2xl p-6">
         <CardHeader>
-          <CardTitle>Card Title</CardTitle>
-          <CardDescription>Card Description</CardDescription>
-          <CardAction>Card Action</CardAction>
+          <CardTitle className="text-3xl">Saitama AI Image Generator</CardTitle>
+          <CardDescription>
+            Generate stunning images from your imagination!
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <p>Card Content</p>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="prompt">Your Prompt</Label>
+            <Textarea
+              id="prompt"
+              placeholder="A futuristic cityscape with flying cars..."
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="resize-none"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Creativity / Guidance</Label>
+            <Slider
+              defaultValue={[guidance]}
+              max={20}
+              step={0.5}
+              onValueChange={(val) => setGuidance(val[0])}
+            />
+            <p className="text-sm text-muted-foreground">
+              Current value: {guidance}
+            </p>
+          </div>
+
+          <div className="flex justify-end">
+            <Button onClick={generateImage} disabled={loading}>
+              {loading ? "Generating..." : "Generate Image"}
+            </Button>
+          </div>
         </CardContent>
-        <CardFooter>
-          <p>Card Footer</p>
-        </CardFooter>
       </Card>
+
+      <div className="w-full max-w-2xl">
+        <Separator className="my-6" />
+        <Card className="w-full overflow-hidden rounded-xl border p-4 shadow">
+          <CardHeader>
+            <CardTitle>Output</CardTitle>
+            <CardDescription>Preview of your generated image</CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center items-center min-h-[300px]">
+            {loading ? (
+              <Skeleton className="w-[512px] h-[512px] rounded-md" />
+            ) : image ? (
+              <img
+                src={image}
+                alt="Generated"
+                className="w-full max-w-md rounded-md shadow"
+              />
+            ) : (
+              <p className="text-muted-foreground">No image generated yet.</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
