@@ -21,11 +21,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} min-h-screen antialiased`}>
-        <main>
-          {children}
-          <Footer />
-        </main>
+      <body
+        className={`min-h-screen flex flex-col ${poppins.variable} antialiased`}
+        style={{ height: "100vh" }} // ensure full viewport height
+      >
+        <main className="flex-grow overflow-auto">{children}</main>
+        <Footer />
       </body>
     </html>
   );

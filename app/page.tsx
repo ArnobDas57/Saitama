@@ -14,10 +14,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { FlickeringGrid } from "@/components/magicui/flickering-grid";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   const [prompt, setPrompt] = useState("");
@@ -27,7 +26,6 @@ export default function Home() {
 
   const generateImage = async () => {
     setLoading(true);
-    // Simulate image generation
     setTimeout(() => {
       setImage("https://placekitten.com/512/512"); // Replace with actual API response
       setLoading(false);
@@ -35,16 +33,11 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen relative bg-background text-foreground flex flex-col items-center px-4 py-10 overflow-hidden">
-      {/* FlickeringGrid as full background */}
-      <div className="absolute inset-0 -z-20">
-        <FlickeringGrid />
-      </div>
+    <div className="animated-gradient-bg min-h-screen relative text-foreground flex flex-col items-center px-4 py-10 overflow-hidden">
+      {/* Optional overlay for better text contrast */}
+      <div className="absolute inset-0 bg-black/40 z-0" />
 
-      {/* Overlay for better readability */}
-      <div className="absolute inset-0 bg-background/70 backdrop-blur-sm -z-10" />
-
-      {/* Main content card */}
+      {/* Main Card Content */}
       <Card className="w-full max-w-2xl shadow-lg border rounded-2xl p-6 z-10">
         <CardHeader>
           <div>
@@ -59,8 +52,9 @@ export default function Home() {
             Generate stunning images from your imagination!
           </CardDescription>
         </CardHeader>
+
         <CardContent className="space-y-6">
-          {/* Prompt input */}
+          {/* Prompt Input */}
           <Label htmlFor="prompt">Enter prompt</Label>
           <Textarea
             id="prompt"
@@ -71,31 +65,29 @@ export default function Home() {
             className="w-full"
           />
 
-          {/* Guidance slider */}
+          {/* Guidance Slider */}
           <div>
             <Label htmlFor="guidance">
               Guidance Scale: {guidance.toFixed(1)}
             </Label>
             <Slider
               id="guidance"
-              value={[guidance]} // Pass as single-element array
+              value={[guidance]} // Pass single-element array for Radix slider
               min={1}
               max={20}
               step={0.1}
-              onValueChange={(value) => {
-                setGuidance(value[0]); // value is always an array, so pick first element
-              }}
+              onValueChange={(value) => setGuidance(value[0])}
             />
           </div>
 
-          {/* Generate button */}
+          {/* Generate Button */}
           <Button onClick={generateImage} disabled={loading || !prompt.trim()}>
             {loading ? "Generating..." : "Generate Image"}
           </Button>
         </CardContent>
       </Card>
 
-      {/* Output card */}
+      {/* Output Section */}
       <div className="w-full max-w-2xl z-10 mt-8">
         <Separator className="my-6" />
         <Card className="w-full overflow-hidden rounded-xl border p-4 shadow">
