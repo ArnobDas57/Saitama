@@ -36,15 +36,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative bg-background text-foreground flex flex-col items-center px-4 py-10 overflow-hidden">
-      {/* Background animation */}
+      {/* FlickeringGrid as full background */}
       <div className="absolute inset-0 -z-20">
-        <FlickeringGrid className="h-full w-full" />
+        <FlickeringGrid />
       </div>
 
-      {/* OPTIONAL: overlay for readability */}
+      {/* Overlay for better readability */}
       <div className="absolute inset-0 bg-background/70 backdrop-blur-sm -z-10" />
 
-      {/* 💡 YOUR CONTENT */}
+      {/* Main content card */}
       <Card className="w-full max-w-2xl shadow-lg border rounded-2xl p-6 z-10">
         <CardHeader>
           <div>
@@ -60,12 +60,43 @@ export default function Home() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Your prompt input + slider + button here */}
+          {/* Prompt input */}
+          <Label htmlFor="prompt">Enter prompt</Label>
+          <Textarea
+            id="prompt"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Describe your image..."
+            rows={3}
+            className="w-full"
+          />
+
+          {/* Guidance slider */}
+          <div>
+            <Label htmlFor="guidance">
+              Guidance Scale: {guidance.toFixed(1)}
+            </Label>
+            <Slider
+              id="guidance"
+              value={[guidance]} // Pass as single-element array
+              min={1}
+              max={20}
+              step={0.1}
+              onValueChange={(value) => {
+                setGuidance(value[0]); // value is always an array, so pick first element
+              }}
+            />
+          </div>
+
+          {/* Generate button */}
+          <Button onClick={generateImage} disabled={loading || !prompt.trim()}>
+            {loading ? "Generating..." : "Generate Image"}
+          </Button>
         </CardContent>
       </Card>
 
       {/* Output card */}
-      <div className="w-full max-w-2xl z-10">
+      <div className="w-full max-w-2xl z-10 mt-8">
         <Separator className="my-6" />
         <Card className="w-full overflow-hidden rounded-xl border p-4 shadow">
           <CardHeader>
@@ -79,7 +110,9 @@ export default function Home() {
               <Image
                 src={image}
                 alt="Generated"
-                className="w-full max-w-md rounded-md shadow"
+                width={512}
+                height={512}
+                className="rounded-md shadow"
               />
             ) : (
               <p className="text-muted-foreground">No image generated yet.</p>
