@@ -22,9 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} min-h-screen antialiased`}>
-        {children}
+        <main>
+          {children}
+          <Footer />
+        </main>
       </body>
-      <Footer />
     </html>
   );
 }

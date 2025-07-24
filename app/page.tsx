@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import FaultyTerminal from "@/components/ui/FaultyTerminal";
+import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 
 export default function Home() {
   const [prompt, setPrompt] = useState("");
@@ -35,27 +36,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative bg-background text-foreground flex flex-col items-center px-4 py-10 overflow-hidden">
-      {/* 🪐 BACKGROUND LAYER */}
-      <div className="absolute inset-0 -z-10">
-        <FaultyTerminal
-          scale={1.5}
-          gridMul={[2, 1]}
-          digitSize={1.2}
-          timeScale={1}
-          pause={false}
-          scanlineIntensity={1}
-          glitchAmount={1}
-          flickerAmount={1}
-          noiseAmp={1}
-          chromaticAberration={0}
-          dither={0}
-          curvature={0}
-          tint="#ffffff"
-          mouseReact={true}
-          mouseStrength={0.5}
-          pageLoadAnimation={false}
-          brightness={1}
-        />
+      {/* Background animation */}
+      <div className="absolute inset-0 -z-20">
+        <FlickeringGrid className="h-full w-full" />
       </div>
 
       {/* OPTIONAL: overlay for readability */}
@@ -93,7 +76,7 @@ export default function Home() {
             {loading ? (
               <Skeleton className="w-[512px] h-[512px] rounded-md" />
             ) : image ? (
-              <img
+              <Image
                 src={image}
                 alt="Generated"
                 className="w-full max-w-md rounded-md shadow"
