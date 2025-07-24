@@ -16,7 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import FaultyTerminal from "@/components/ui/FaultyTerminal";
 
 export default function Home() {
   const [prompt, setPrompt] = useState("");
@@ -37,7 +37,14 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground px-4 py-10 flex flex-col items-center gap-10">
       <Card className="w-full max-w-2xl shadow-lg border rounded-2xl p-6">
         <CardHeader>
-          <CardTitle className="text-3xl">Saitama AI Image Generator</CardTitle>
+          <div>
+            <h1 className="text-5xl font-bold tracking-tight text-primary">
+              Saitama
+            </h1>
+            <p className="text-muted-foreground text-lg mt-1">
+              AI Image Generator
+            </p>
+          </div>
           <CardDescription>
             Generate stunning images from your imagination!
           </CardDescription>
