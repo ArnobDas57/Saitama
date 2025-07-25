@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
-import { Bookmark } from "lucide-react";
+import { Bookmark, Wand } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -74,6 +74,13 @@ export default function Home() {
     }, 2000);
   };
 
+  const handleRandomGenerate = () => {
+    const randomPrompt =
+      examplePrompts[Math.floor(Math.random() * examplePrompts.length)];
+
+    setPrompt(randomPrompt);
+  };
+
   return (
     <div className="animated-gradient-bg min-h-screen relative flex flex-col items-center px-4 py-10 overflow-hidden">
       {/* Main Card Content */}
@@ -94,15 +101,23 @@ export default function Home() {
 
         <CardContent className="space-y-6 mt-2">
           {/* Prompt Input */}
-          <Label htmlFor="prompt">Enter prompt</Label>
-          <Textarea
-            id="prompt"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe your imagination in detail..."
-            rows={3}
-            className="w-full"
-          />
+          <div className="relative w-full">
+            <Textarea
+              id="prompt"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe your imagination in detail..."
+              rows={3}
+              className="w-full pr-12"
+            />
+            <button
+              type="button"
+              onClick={handleRandomGenerate}
+              className="absolute right-4 bottom-3 p-3 bg-gray-800 rounded-md shadow text-purple-200 hover:text-purple-800 hover:bg-amber-600 hover:cursor-pointer transition"
+            >
+              <Wand className="h-5 w-5" />
+            </button>
+          </div>
 
           {/* Guidance Slider */}
           <div className="mb-15">
@@ -174,13 +189,13 @@ export default function Home() {
             <Button
               onClick={generateImage}
               disabled={loading || !prompt.trim()}
-              className="w-1/3 font-bold h-12 py-3 bg-black text-2xl"
+              className="w-1/3 font-bold h-12 py-3 bg-black text-2xl hover:cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:bg-gray-900"
             >
               {loading ? (
                 <p className="gradient-text-ani">{"Generating ..."}</p>
               ) : (
-                <div className="flex-row flex gap-3">
-                  <FaMagic className="mt-2" />
+                <div className="flex flex-row gap-3 items-center justify-center">
+                  <FaMagic className="mt-1" />
                   <p className="gradient-text-ani">{"Generate Image"}</p>
                 </div>
               )}
