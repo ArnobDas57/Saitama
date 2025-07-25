@@ -27,6 +27,7 @@ import {
   SelectGroup,
 } from "@/components/ui/select";
 import { FaMagic } from "react-icons/fa";
+import TextType from "@/components/ui/TextType";
 
 const models = [
   "FLUX.1-dev",
@@ -62,7 +63,6 @@ export default function Home() {
   const [selectedType, setSelectedType] = useState("Image");
   const [selectedAspect, setSelectedAspect] = useState("1:1");
   const [prompt, setPrompt] = useState("");
-  const [guidance, setGuidance] = useState(7.5);
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -90,12 +90,25 @@ export default function Home() {
             <h1 className="gradient-text-ani text-7xl font-bold tracking-tight my-6 flex mx-auto justify-center">
               Saitama
             </h1>
-            <p className="text-lg font-bold mt-2">AI Image Generator</p>
-          </div>
-          <CardDescription>
-            <p className="text-lg">
-              Bring your wildest ideas to life with a single prompt.
+            <p className="text-2xl font-bold mt-2 flex justify-center">
+              AI image generation, simplified
             </p>
+          </div>
+          <CardDescription className="mt-5">
+            <TextType
+              text={[
+                "Say it and Saitama will draw it.",
+                "Imagine it. Prompt it. See it.",
+                "Bring your wildest ideas to life with a single prompt.",
+                "Natural language. Unnatural results.",
+              ]}
+              typingSpeed={75}
+              pauseDuration={1500}
+              showCursor={true}
+              cursorCharacter="|"
+              textColors={["#00CBE6", "#9333ea"]}
+              className="text-2xl font-bold"
+            />
           </CardDescription>
         </CardHeader>
 
@@ -108,7 +121,7 @@ export default function Home() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Describe your imagination in detail..."
               rows={3}
-              className="w-full pr-12"
+              className="w-full pr-12 h-40 mb-10 text-xl leading-relaxed tracking-wide"
             />
             <button
               type="button"
@@ -117,21 +130,6 @@ export default function Home() {
             >
               <Wand className="h-5 w-5" />
             </button>
-          </div>
-
-          {/* Guidance Slider */}
-          <div className="mb-15">
-            <Label htmlFor="guidance">
-              Guidance Scale: {guidance.toFixed(1)}
-            </Label>
-            <Slider
-              id="guidance"
-              value={[guidance]} // Pass single-element array for Radix slider
-              min={1}
-              max={20}
-              step={0.1}
-              onValueChange={(value) => setGuidance(value[0])}
-            />
           </div>
 
           {/* Generate Button */}
