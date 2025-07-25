@@ -81,6 +81,8 @@ export default function Home() {
     setPrompt(randomPrompt);
   };
 
+  const handleFormSubmit = () => {};
+
   return (
     <div className="animated-gradient-bg min-h-screen relative flex flex-col items-center px-4 py-10 overflow-hidden">
       {/* Main Card Content */}
@@ -113,92 +115,103 @@ export default function Home() {
         </CardHeader>
 
         <CardContent className="space-y-6 mt-2">
-          {/* Prompt Input */}
-          <div className="relative w-full">
-            <Textarea
-              id="prompt"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe your imagination in detail..."
-              rows={3}
-              className="w-full pr-12 h-40 mb-10 text-xl leading-relaxed tracking-wide"
-            />
-            <button
-              type="button"
-              onClick={handleRandomGenerate}
-              className="absolute right-4 bottom-3 p-3 bg-gray-800 rounded-md shadow text-purple-200 hover:text-purple-800 hover:bg-amber-600 hover:cursor-pointer transition"
-            >
-              <Wand className="h-5 w-5" />
-            </button>
-          </div>
-
-          {/* Generate Button */}
-          <div className="flex justify-center">
-            <div className="px-5 gap-2 flex flex-row">
-              <Select>
-                <SelectTrigger className="w-[180px] bg-amber-200">
-                  <SelectValue placeholder="Select a Model" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Models</SelectLabel>
-                    {models.map((model) => (
-                      <SelectItem key={model} value={model}>
-                        {model}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-
-              <Select>
-                <SelectTrigger className="w-[180px] bg-amber-200">
-                  <SelectValue placeholder="Image count" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Image Count</SelectLabel>
-                    {types.map((types) => (
-                      <SelectItem key={types} value={types}>
-                        {types}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-
-              <Select>
-                <SelectTrigger className="w-[180px] bg-amber-200">
-                  <SelectValue placeholder="Aspect Ratio" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Aspect Ratio</SelectLabel>
-                    {aspectRatios.map((ratio) => (
-                      <SelectItem key={ratio} value={ratio}>
-                        {ratio}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              generateImage();
+            }}
+            className="space-y-6"
+          >
+            {/* Prompt Input */}
+            <div className="relative w-full">
+              <Textarea
+                id="prompt"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Describe your imagination in detail..."
+                rows={3}
+                className="w-full pr-12 h-40 mb-10 text-xl leading-relaxed tracking-wide"
+              />
+              <button
+                type="button"
+                onClick={handleRandomGenerate}
+                className="absolute right-4 bottom-3 p-3 bg-gray-800 rounded-md shadow text-purple-200 hover:text-purple-800 hover:bg-amber-600 hover:cursor-pointer transition"
+              >
+                <Wand className="h-5 w-5" />
+              </button>
             </div>
 
-            <Button
-              onClick={generateImage}
-              disabled={loading || !prompt.trim()}
-              className="w-1/3 font-bold h-12 py-3 bg-black text-2xl hover:cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:bg-gray-900"
-            >
-              {loading ? (
-                <p className="gradient-text-ani">{"Generating ..."}</p>
-              ) : (
-                <div className="flex flex-row gap-3 items-center justify-center">
-                  <FaMagic className="mt-1" />
-                  <p className="gradient-text-ani">{"Generate Image"}</p>
-                </div>
-              )}
-            </Button>
-          </div>
+            {/* Dropdowns */}
+            <div className="flex justify-center">
+              <div className="px-5 gap-2 flex flex-row">
+                <Select>
+                  <SelectTrigger className="w-[180px] bg-amber-200">
+                    <SelectValue placeholder="Select a Model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Models</SelectLabel>
+                      {models.map((model) => (
+                        <SelectItem key={model} value={model}>
+                          {model}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+
+                <Select>
+                  <SelectTrigger className="w-[180px] bg-amber-200">
+                    <SelectValue placeholder="Image count" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Image Count</SelectLabel>
+                      {types.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+
+                <Select>
+                  <SelectTrigger className="w-[180px] bg-amber-200">
+                    <SelectValue placeholder="Aspect Ratio" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Aspect Ratio</SelectLabel>
+                      {aspectRatios.map((ratio) => (
+                        <SelectItem key={ratio} value={ratio}>
+                          {ratio}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex justify-center">
+              <Button
+                type="submit"
+                disabled={loading || !prompt.trim()}
+                className="w-1/3 font-bold h-12 py-3 bg-black text-2xl hover:cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:bg-gray-900"
+              >
+                {loading ? (
+                  <p className="gradient-text-ani">{"Generating ..."}</p>
+                ) : (
+                  <div className="flex flex-row gap-3 items-center justify-center">
+                    <FaMagic className="mt-1" />
+                    <p className="gradient-text-ani">{"Generate Image"}</p>
+                  </div>
+                )}
+              </Button>
+            </div>
+          </form>
         </CardContent>
       </Card>
 
