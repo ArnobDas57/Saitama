@@ -33,27 +33,24 @@ export default function Home() {
   };
 
   return (
-    <div className="animated-gradient-bg min-h-screen relative text-foreground flex flex-col items-center px-4 py-10 overflow-hidden">
-      {/* Optional overlay for better text contrast */}
-      <div className="absolute inset-0 bg-black/40 z-0" />
-
+    <div className="animated-gradient-bg min-h-screen relative flex flex-col items-center px-4 py-10 overflow-hidden">
       {/* Main Card Content */}
       <Card className="w-full max-w-2xl shadow-lg border rounded-2xl p-6 z-10">
         <CardHeader>
           <div>
-            <h1 className="text-5xl font-bold tracking-tight text-primary">
+            <h1 className="text-7xl font-bold tracking-tight text-teal-500 my-6 flex mx-auto justify-center">
               Saitama
             </h1>
-            <p className="text-muted-foreground text-lg mt-1">
-              AI Image Generator
-            </p>
+            <p className="text-lg font-bold mt-2">AI Image Generator</p>
           </div>
           <CardDescription>
-            Generate stunning images from your imagination!
+            <p className="text-lg">
+              Bring your wildest ideas to life with a single prompt.
+            </p>
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 mt-2">
           {/* Prompt Input */}
           <Label htmlFor="prompt">Enter prompt</Label>
           <Textarea
@@ -81,7 +78,11 @@ export default function Home() {
           </div>
 
           {/* Generate Button */}
-          <Button onClick={generateImage} disabled={loading || !prompt.trim()}>
+          <Button
+            onClick={generateImage}
+            disabled={loading || !prompt.trim()}
+            className="w-2/3 p-6 font-bold bg-black text-2xl tracking-tight text-teal-500"
+          >
             {loading ? "Generating..." : "Generate Image"}
           </Button>
         </CardContent>
@@ -100,7 +101,7 @@ export default function Home() {
               <Skeleton className="w-[512px] h-[512px] rounded-md" />
             ) : image ? (
               <Image
-                src={image}
+                src="./globe.svg"
                 alt="Generated"
                 width={512}
                 height={512}
