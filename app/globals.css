@@ -167,8 +167,8 @@
   }
 }
 
-.gradient-text {
-  background: linear-gradient(270deg, #06b6d4, #9333ea, #f43f5e);
+.gradient-text-ani {
+  background: linear-gradient(270deg, #75eaff, #9333ea, #75eaff);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

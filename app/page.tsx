@@ -64,7 +64,7 @@ export default function Home() {
       <Card className="w-7/8 shadow-lg border rounded-2xl p-6 z-10">
         <CardHeader>
           <div>
-            <h1 className="text-7xl font-bold tracking-tight my-6 flex mx-auto justify-center gradient-text-button">
+            <h1 className="gradient-text-ani text-7xl font-bold tracking-tight my-6 flex mx-auto justify-center">
               Saitama
             </h1>
             <p className="text-lg font-bold mt-2">AI Image Generator</p>
@@ -158,14 +158,14 @@ export default function Home() {
             <Button
               onClick={generateImage}
               disabled={loading || !prompt.trim()}
-              className="w-1/3 font-bold h-12 py-3 bg-black text-2xl tracking-tight"
+              className="w-1/3 font-bold h-12 py-3 bg-black text-2xl"
             >
               {loading ? (
-                <p className="gradient-text-button">{"Generating ..."}</p>
+                <p className="gradient-text-ani">{"Generating ..."}</p>
               ) : (
                 <div className="flex-row flex gap-3">
                   <FaMagic className="mt-2" />
-                  <p className="gradient-text-button">{"Generate Image"}</p>
+                  <p className="gradient-text-ani">{"Generate Image"}</p>
                 </div>
               )}
             </Button>
