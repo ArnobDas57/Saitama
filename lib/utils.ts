@@ -1,3 +1,5 @@
+"use server";
+
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { InferenceClient } from "@huggingface/inference";
@@ -13,11 +15,15 @@ if (!hg_api_key) {
 
 export const hfClient = new InferenceClient(hg_api_key);
 
+const MODEL_URL = ``;
+
 export async function generateImage(prompt: string) {
   try {
     const response = await hfClient.textToImage({
-      model: "stabilityai/stable-diffusion-2",
-      inputs: prompt,
+      provider: "nebius",
+      model: "black-forest-labs/FLUX.1-dev",
+      inputs: "Astronaut riding a horse",
+      parameters: { num_inference_steps: 5 },
     });
 
     return response; // This returns a Blob
