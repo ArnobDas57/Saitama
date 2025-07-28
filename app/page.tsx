@@ -3,11 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Slider } from "@/components/ui/slider";
-import { Bookmark, Wand } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -28,18 +24,18 @@ import {
 } from "@/components/ui/select";
 import { FaMagic } from "react-icons/fa";
 import TextType from "@/components/ui/TextType";
+import { generateImage } from "@/lib/utils";
+import { Wand } from "lucide-react";
 
 const models = [
-  "FLUX.1-dev",
-  "FLUX.1-schnell",
-  "Stable Diffusion XL",
-  "Stable Diffusion 1.5",
-  "Openjourney",
+  "black-forest-labs/FLUX.1-dev",
+  "runwayml/stable-diffusion-v1-5",
+  "nitrosocke/mo-di-diffusion",
+  "HiDream-ai/HiDream-I1-Fast",
 ];
-const types = ["Image", "Art", "Illustration"];
 const count = ["1 Image", "2 Images", "3 Images", "4 Images"];
 const aspectRatios = ["1:1", "3:4", "16:9"];
-const sideBarItems = [{ title: "Generate", icon: FaMagic }];
+
 const examplePrompts = [
   "A magic forest with glowing plants and fairy homes among giant mushrooms",
   "An old steampunk airship floating through golden clouds at sunset",
@@ -59,43 +55,44 @@ const examplePrompts = [
 ];
 
 export default function Home() {
-  const [selectedModel, setSelectedModel] = useState("FLUX.1");
-  const [selectedType, setSelectedType] = useState("Image");
-  const [selectedAspect, setSelectedAspect] = useState("1:1");
+  const [selectedModel, setSelectedModel] = useState(models[0]);
+  const [selectedCount, setSelectedCount] = useState(count[0]);
+  const [selectedAspect, setSelectedAspect] = useState(aspectRatios[0]);
   const [prompt, setPrompt] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const generateImage = async () => {
+  const generateAnImage = async () => {
+    if (!prompt.trim()) return;
     setLoading(true);
-    setTimeout(() => {
-      setImage("https://placekitten.com/512/512"); // Replace with actual API response
+    try {
+      const result = await generateImage(prompt, selectedModel);
+      const url = URL.createObjectURL(result);
+      setImage(url);
+    } catch (error) {
+      console.error("Image generation failed:", error);
+    } finally {
       setLoading(false);
-    }, 2000);
+    }
   };
 
   const handleRandomGenerate = () => {
     const randomPrompt =
       examplePrompts[Math.floor(Math.random() * examplePrompts.length)];
-
     setPrompt(randomPrompt);
   };
-
-  const handleFormSubmit = () => {};
 
   return (
     <div className="animated-gradient-bg min-h-screen relative flex flex-col items-center px-4 py-10 overflow-hidden">
       {/* Main Card Content */}
       <Card className="w-7/8 shadow-lg border rounded-2xl p-6 z-10">
         <CardHeader>
-          <div>
-            <h1 className="gradient-text-ani text-7xl font-bold tracking-tight my-6 flex mx-auto justify-center">
-              Saitama
-            </h1>
-            <p className="text-2xl font-bold mt-2 flex justify-center">
-              AI image generation, simplified
-            </p>
-          </div>
+          <h1 className="gradient-text-ani text-7xl font-bold tracking-tight my-6 flex mx-auto justify-center">
+            Saitama
+          </h1>
+          <p className="text-2xl font-bold mt-2 flex justify-center">
+            AI image generation, simplified
+          </p>
           <CardDescription className="mt-5">
             <TextType
               text={[
@@ -118,14 +115,13 @@ export default function Home() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              generateImage();
+              generateAnImage();
             }}
             className="space-y-6"
           >
             {/* Prompt Input */}
             <div className="relative w-full">
               <Textarea
-                id="prompt"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Describe your imagination in detail..."
@@ -144,7 +140,10 @@ export default function Home() {
             {/* Dropdowns */}
             <div className="flex justify-center">
               <div className="px-5 gap-2 flex flex-row">
-                <Select>
+                <Select
+                  value={selectedModel}
+                  onValueChange={(val) => setSelectedModel(val)}
+                >
                   <SelectTrigger className="w-[180px] bg-amber-200">
                     <SelectValue placeholder="Select a Model" />
                   </SelectTrigger>
@@ -160,23 +159,29 @@ export default function Home() {
                   </SelectContent>
                 </Select>
 
-                <Select>
+                <Select
+                  value={selectedCount}
+                  onValueChange={(val) => setSelectedCount(val)}
+                >
                   <SelectTrigger className="w-[180px] bg-amber-200">
                     <SelectValue placeholder="Image count" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Image Count</SelectLabel>
-                      {types.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
+                      {count.map((item) => (
+                        <SelectItem key={item} value={item}>
+                          {item}
                         </SelectItem>
                       ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
 
-                <Select>
+                <Select
+                  value={selectedAspect}
+                  onValueChange={(val) => setSelectedAspect(val)}
+                >
                   <SelectTrigger className="w-[180px] bg-amber-200">
                     <SelectValue placeholder="Aspect Ratio" />
                   </SelectTrigger>
