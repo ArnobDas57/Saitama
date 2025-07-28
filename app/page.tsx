@@ -24,14 +24,19 @@ import {
 } from "@/components/ui/select";
 import { FaMagic } from "react-icons/fa";
 import TextType from "@/components/ui/TextType";
-import { generateImage } from "@/lib/utils";
 import { Wand } from "lucide-react";
 
-const models = [
-  "black-forest-labs/FLUX.1-dev",
-  "runwayml/stable-diffusion-v1-5",
-  "nitrosocke/mo-di-diffusion",
-  "HiDream-ai/HiDream-I1-Fast",
+const modelOptions = [
+  { label: "FLUX.1.dev", value: "black-forest-labs/FLUX.1-dev" },
+  { label: "Stable Diffusion v2", value: "stabilityai/stable-diffusion-2" },
+  { label: "Stable Diffusion v1.5", value: "runwayml/stable-diffusion-v1-5" },
+  { label: "OpenJourney", value: "prompthero/openjourney" },
+  { label: "Redshift Diffusion", value: "nitrosocke/redshift-diffusion" },
+  { label: "Stable Diffusion v1.4", value: "CompVis/stable-diffusion-v1-4" },
+  {
+    label: "Dreamlike Diffusion",
+    value: "dreamlike-art/dreamlike-diffusion-1.0",
+  },
 ];
 const count = ["1 Image", "2 Images", "3 Images", "4 Images"];
 const aspectRatios = ["1:1", "3:4", "16:9"];
@@ -55,20 +60,29 @@ const examplePrompts = [
 ];
 
 export default function Home() {
-  const [selectedModel, setSelectedModel] = useState(models[0]);
+  const [selectedModel, setSelectedModel] = useState(modelOptions[0].value);
   const [selectedCount, setSelectedCount] = useState(count[0]);
   const [selectedAspect, setSelectedAspect] = useState(aspectRatios[0]);
   const [prompt, setPrompt] = useState("");
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImageURL] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const generateAnImage = async () => {
     if (!prompt.trim()) return;
     setLoading(true);
     try {
-      const result = await generateImage(prompt, selectedModel);
-      const url = URL.createObjectURL(result);
-      setImage(url);
+      const result = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: prompt,
+          model: selectedModel,
+        }),
+      });
+
+      const imageBlob = await result.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setImageURL(imageUrl);
     } catch (error) {
       console.error("Image generation failed:", error);
     } finally {
@@ -140,6 +154,12 @@ export default function Home() {
             {/* Dropdowns */}
             <div className="flex justify-center">
               <div className="px-5 gap-2 flex flex-row">
+                <label
+                  htmlFor="model-select"
+                  className="block mb-1 text-sm font-medium"
+                >
+                  Choose a Model:
+                </label>
                 <Select
                   value={selectedModel}
                   onValueChange={(val) => setSelectedModel(val)}
@@ -150,9 +170,9 @@ export default function Home() {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Models</SelectLabel>
-                      {models.map((model) => (
-                        <SelectItem key={model} value={model}>
-                          {model}
+                      {modelOptions.map((model) => (
+                        <SelectItem key={model.value} value={model.value}>
+                          {model.label}
                         </SelectItem>
                       ))}
                     </SelectGroup>
