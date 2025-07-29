@@ -80,10 +80,17 @@ export default function Home() {
         }),
       });
 
-      const { image } = await result.json();
-      setImageURL(`data:image/png;base64,${image}`);
+      const data = await result.json();
+      console.log("IMAGE DATA:", data);
+
+      if (data.image) {
+        setImageURL(`data:image/png;base64,${data.image}`);
+      } else {
+        throw new Error("No image data returned.");
+      }
     } catch (error) {
       console.error("Image generation failed:", error);
+      setImageURL(null);
     } finally {
       setLoading(false);
     }
@@ -253,10 +260,11 @@ export default function Home() {
             ) : imageURL ? (
               <Image
                 src={imageURL || "https://www.placecats.com/512/512"}
-                alt="Generated"
+                alt="Generated Image"
                 width={512}
                 height={512}
                 className="rounded-md shadow"
+                unoptimized
               />
             ) : (
               <p className="text-muted-foreground">No image generated yet.</p>
