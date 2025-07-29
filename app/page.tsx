@@ -64,7 +64,7 @@ export default function Home() {
   const [selectedCount, setSelectedCount] = useState(count[0]);
   const [selectedAspect, setSelectedAspect] = useState(aspectRatios[0]);
   const [prompt, setPrompt] = useState("");
-  const [image, setImageURL] = useState<string | null>(null);
+  const [imageURL, setImageURL] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const generateAnImage = async () => {
@@ -80,9 +80,8 @@ export default function Home() {
         }),
       });
 
-      const imageBlob = await result.blob();
-      const imageUrl = URL.createObjectURL(imageBlob);
-      setImageURL(imageUrl);
+      const { image } = await result.json();
+      setImageURL(`data:image/png;base64,${image}`);
     } catch (error) {
       console.error("Image generation failed:", error);
     } finally {
@@ -251,9 +250,9 @@ export default function Home() {
           <CardContent className="flex justify-center items-center min-h-[300px]">
             {loading ? (
               <Skeleton className="w-[512px] h-[512px] rounded-md" />
-            ) : image ? (
+            ) : imageURL ? (
               <Image
-                src="./globe.svg"
+                src={imageURL || "https://www.placecats.com/512/512"}
                 alt="Generated"
                 width={512}
                 height={512}
