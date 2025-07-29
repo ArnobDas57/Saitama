@@ -32,7 +32,7 @@ export async function POST(req: Request) {
         },
       });
 
-      // Convert to base64
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const blob = new Blob([response as any]);
       const buffer = await blob.arrayBuffer();
       const base64 = Buffer.from(buffer).toString("base64");
