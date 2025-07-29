@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+<div align="center">
+  <img src="./public/saitama.png" alt="Saitama Logo" width="100" />
+  <h1>Saitama: AI-Powered Image Generation</h1>
+</div>
 
-First, run the development server:
+Saitama is a sleek AI image generator that lets you bring your wildest prompts to life using powerful models from Hugging Face. Choose a model, input a prompt, and watch Saitama punch out stunning visuals in real time. 
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌐 Live Demo
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🖥️ https://saitama-livid.vercel.app/
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Backend: NodeJS + Hugging Face Inference API   
+Frontend: Next.js + Tailwind CSS  
+Image Models: Stable Diffusion and FLUX
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ Features
 
-To learn more about Next.js, take a look at the following resources:
+📝 **Prompt Input:** Type in any prompt and generate images with the click of a button.  
+🎨 **Model Selector:** Choose from top models like Stable Diffusion 1.5, 2.0, and FLUX.  
+📸 **Dynamic Image Gallery:** Generate multiple images at once and preview results in a responsive layout.  
+⚙️ **Custom Dimensions:** Set your preferred width and height for output images.    
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ⚙️ Technologies
 
-## Deploy on Vercel
+- [Next.js](https://nextjs.org/)
+- [React](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Hugging Face Inference API](https://huggingface.co/inference-api)
+- [Vanta.js (Galaxy effect)](https://github.com/tengbao/vanta)
+- [TypeScript](https://www.typescriptlang.org/)
+- Deployed via [Vercel](https://vercel.com/)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚧 Future Enhancements
+
+- 🚀 Add image downloading and sharing options
+- 🌙 Dark mode support.  
+- 📁 Prompt history and Saved images  
+- 🔒 Authentication and user profiles  
+- 📊 Model usage analytics  
+- 🧪 Add more model types: anime, 3D, pixel art, etc.
+
+---
+
+
+
