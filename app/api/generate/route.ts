@@ -11,30 +11,40 @@ if (!hf_api_key) {
 const client = new InferenceClient(hf_api_key);
 
 export async function POST(req: Request) {
-  const { prompt, model } = await req.json();
+  const {
+    prompt,
+    model,
+    count = 1,
+    selectedWidth,
+    selectedHeight,
+  } = await req.json();
 
   try {
-    const imageBlob = await client.textToImage({
-      model: model || "stabilityai/stable-diffusion-2",
-      inputs: prompt,
-    });
+    const images: string[] = [];
 
-    if (typeof imageBlob === "string") {
-      console.error("Hugging Face API error:", imageBlob);
-      return NextResponse.json(
-        { error: imageBlob || "Image generation failed." },
-        { status: 500 }
-      );
+    for (let i = 0; i < count; i++) {
+      const response = await client.textToImage({
+        model: model || "stabilityai/stable-diffusion-2",
+        inputs: prompt,
+        parameters: {
+          width: selectedWidth,
+          height: selectedHeight,
+        },
+      });
+
+      // Convert to base64
+      const blob = new Blob([response as any]);
+      const buffer = await blob.arrayBuffer();
+      const base64 = Buffer.from(buffer).toString("base64");
+
+      images.push(base64);
     }
 
-    const buffer = await imageBlob.arrayBuffer();
-    const base64 = Buffer.from(buffer).toString("base64");
-
-    return new Response(JSON.stringify({ image: base64 }), { status: 200 });
+    return NextResponse.json({ images });
   } catch (error) {
-    console.error("Failed to generate image:", error);
+    console.error("Failed to generate images:", error);
     return NextResponse.json(
-      { error: "Unexpected server error during image generation." },
+      { error: "Image generation failed. Try a different model." },
       { status: 500 }
     );
   }

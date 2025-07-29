@@ -26,6 +26,12 @@ import { FaMagic } from "react-icons/fa";
 import TextType from "@/components/ui/TextType";
 import { Wand } from "lucide-react";
 
+interface aspectRatioType {
+  label: string;
+  width: number;
+  height: number;
+}
+
 const modelOptions = [
   { label: "FLUX.1.dev", value: "black-forest-labs/FLUX.1-dev" },
   { label: "Stable Diffusion v2", value: "stabilityai/stable-diffusion-2" },
@@ -38,8 +44,13 @@ const modelOptions = [
     value: "dreamlike-art/dreamlike-diffusion-1.0",
   },
 ];
-const count = ["1 Image", "2 Images", "3 Images", "4 Images"];
-const aspectRatios = ["1:1", "3:4", "16:9"];
+
+const countOptions: number[] = [1, 2, 3, 4];
+const aspectRatios: aspectRatioType[] = [
+  { label: "Square (1:1)", width: 512, height: 512 },
+  { label: "Portrait (3:4)", width: 768, height: 1024 },
+  { label: "Landscape (4:3)", width: 1024, height: 768 },
+];
 
 const examplePrompts = [
   "A magic forest with glowing plants and fairy homes among giant mushrooms",
@@ -61,10 +72,10 @@ const examplePrompts = [
 
 export default function Home() {
   const [selectedModel, setSelectedModel] = useState(modelOptions[0].value);
-  const [selectedCount, setSelectedCount] = useState(count[0]);
+  const [selectedCount, setSelectedCount] = useState<number>(1);
   const [selectedAspect, setSelectedAspect] = useState(aspectRatios[0]);
   const [prompt, setPrompt] = useState("");
-  const [imageURL, setImageURL] = useState<string | null>(null);
+  const [imageURLs, setImageURLs] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const generateAnImage = async () => {
@@ -77,20 +88,26 @@ export default function Home() {
         body: JSON.stringify({
           prompt: prompt,
           model: selectedModel,
+          count: selectedCount,
+          width: selectedAspect.width,
+          height: selectedAspect.height,
         }),
       });
 
       const data = await result.json();
       console.log("IMAGE DATA:", data);
 
-      if (data.image) {
-        setImageURL(`data:image/png;base64,${data.image}`);
+      if (data.images && Array.isArray(data.images)) {
+        const urls = data.images.map(
+          (base64: string) => `data:image/png;base64,${base64}`
+        );
+        setImageURLs(urls);
       } else {
         throw new Error("No image data returned.");
       }
     } catch (error) {
       console.error("Image generation failed:", error);
-      setImageURL(null);
+      setImageURLs([]);
     } finally {
       setLoading(false);
     }
@@ -186,8 +203,8 @@ export default function Home() {
                 </Select>
 
                 <Select
-                  value={selectedCount}
-                  onValueChange={(val) => setSelectedCount(val)}
+                  value={selectedCount.toString()}
+                  onValueChange={(val) => setSelectedCount(parseInt(val))}
                 >
                   <SelectTrigger className="w-[180px] bg-amber-200">
                     <SelectValue placeholder="Image count" />
@@ -195,9 +212,9 @@ export default function Home() {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Image Count</SelectLabel>
-                      {count.map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
+                      {countOptions.map((item) => (
+                        <SelectItem key={item} value={item.toString()}>
+                          {item} Image{item > 1 ? "s" : ""}
                         </SelectItem>
                       ))}
                     </SelectGroup>
@@ -205,8 +222,11 @@ export default function Home() {
                 </Select>
 
                 <Select
-                  value={selectedAspect}
-                  onValueChange={(val) => setSelectedAspect(val)}
+                  value={selectedAspect.label}
+                  onValueChange={(val) => {
+                    const ratio = aspectRatios.find((r) => r.label === val);
+                    if (ratio) setSelectedAspect(ratio);
+                  }}
                 >
                   <SelectTrigger className="w-[180px] bg-amber-200">
                     <SelectValue placeholder="Aspect Ratio" />
@@ -215,8 +235,8 @@ export default function Home() {
                     <SelectGroup>
                       <SelectLabel>Aspect Ratio</SelectLabel>
                       {aspectRatios.map((ratio) => (
-                        <SelectItem key={ratio} value={ratio}>
-                          {ratio}
+                        <SelectItem key={ratio.label} value={ratio.label}>
+                          {ratio.label}
                         </SelectItem>
                       ))}
                     </SelectGroup>
@@ -247,27 +267,37 @@ export default function Home() {
       </Card>
 
       {/* Output Section */}
-      <div className="w-full max-w-2xl z-10 mt-8">
+      <div className="w-full max-w-4xl z-10 mt-8">
         <Separator className="my-6" />
         <Card className="w-full overflow-hidden rounded-xl border p-4 shadow">
           <CardHeader>
             <CardTitle>Output</CardTitle>
-            <CardDescription>Preview of your generated image</CardDescription>
+            <CardDescription>Preview of your generated images</CardDescription>
           </CardHeader>
-          <CardContent className="flex justify-center items-center min-h-[300px]">
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-center">
             {loading ? (
-              <Skeleton className="w-[512px] h-[512px] rounded-md" />
-            ) : imageURL ? (
-              <Image
-                src={imageURL || "https://www.placecats.com/512/512"}
-                alt="Generated Image"
-                width={512}
-                height={512}
-                className="rounded-md shadow"
-                unoptimized
-              />
+              Array.from({ length: selectedCount || 1 }).map((_, idx) => (
+                <Skeleton
+                  key={idx}
+                  className="w-full h-[256px] rounded-md mx-auto"
+                />
+              ))
+            ) : imageURLs.length > 0 ? (
+              imageURLs.map((url, index) => (
+                <Image
+                  key={index}
+                  src={url}
+                  alt={`Generated Image ${index + 1}`}
+                  width={512}
+                  height={512}
+                  className="rounded-md shadow object-contain w-full h-auto"
+                  unoptimized
+                />
+              ))
             ) : (
-              <p className="text-muted-foreground">No image generated yet.</p>
+              <p className="text-muted-foreground col-span-full text-center">
+                No image generated yet.
+              </p>
             )}
           </CardContent>
         </Card>
