@@ -33,12 +33,9 @@ interface aspectRatioType {
 }
 
 const modelOptions = [
-  { label: "FLUX.1.dev", value: "black-forest-labs/FLUX.1-dev" },
   { label: "Stable Diffusion v2", value: "stabilityai/stable-diffusion-2" },
   { label: "Stable Diffusion v1.5", value: "runwayml/stable-diffusion-v1-5" },
   { label: "OpenJourney", value: "prompthero/openjourney" },
-  { label: "Redshift Diffusion", value: "nitrosocke/redshift-diffusion" },
-  { label: "Stable Diffusion v1.4", value: "CompVis/stable-diffusion-v1-4" },
   {
     label: "Dreamlike Diffusion",
     value: "dreamlike-art/dreamlike-diffusion-1.0",
@@ -276,12 +273,18 @@ export default function Home() {
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-center">
             {loading ? (
-              Array.from({ length: selectedCount || 1 }).map((_, idx) => (
-                <Skeleton
-                  key={idx}
-                  className="w-full h-[256px] rounded-md mx-auto"
-                />
-              ))
+              <div className="flex flex-col items-center gap-4 w-full">
+                <p className="text-center text-gray-600 text-sm">
+                  🎨 Images coming right up… hang tight! This may take a few
+                  moments.
+                </p>
+                {Array.from({ length: selectedCount || 1 }).map((_, idx) => (
+                  <Skeleton
+                    key={idx}
+                    className="w-full h-[256px] rounded-md mx-auto"
+                  />
+                ))}
+              </div>
             ) : imageURLs.length > 0 ? (
               imageURLs.map((url, index) => (
                 <Image
@@ -294,11 +297,7 @@ export default function Home() {
                   unoptimized
                 />
               ))
-            ) : (
-              <p className="text-muted-foreground col-span-full text-center">
-                No image generated yet.
-              </p>
-            )}
+            ) : null}
           </CardContent>
         </Card>
       </div>
