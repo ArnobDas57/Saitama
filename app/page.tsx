@@ -74,10 +74,14 @@ export default function Home() {
   const [prompt, setPrompt] = useState("");
   const [imageURLs, setImageURLs] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const generateAnImage = async () => {
     if (!prompt.trim()) return;
     setLoading(true);
+    setError(null);
+    setImageURLs([]);
+
     try {
       const result = await fetch("/api/generate", {
         method: "POST",
@@ -94,16 +98,43 @@ export default function Home() {
       const data = await result.json();
       console.log("IMAGE DATA:", data);
 
+      // Check if API returned an error message or bad status
+      if (!result.ok) {
+        if (
+          data.error?.message?.includes(
+            "exceeded your monthly included credits"
+          )
+        ) {
+          setError(
+            "🚫 Service temporarily unavailable: We've hit our monthly usage limit for AI image generation. Please check back later, or try again next month. Thanks for your patience!"
+          );
+        } else if (data.error?.message) {
+          setError(data.error.message);
+        } else {
+          setError("Something went wrong. Please try again later.");
+        }
+        setImageURLs([]);
+        return; // Exit early since error occurred
+      }
+
       if (data.images && Array.isArray(data.images)) {
         const urls = data.images.map(
           (base64: string) => `data:image/png;base64,${base64}`
         );
         setImageURLs(urls);
       } else {
-        throw new Error("No image data returned.");
+        setError("No images were returned. Please try again.");
+        setImageURLs([]);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Image generation failed:", error);
+
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Something went wrong. Please try again later.");
+      }
+
       setImageURLs([]);
     } finally {
       setLoading(false);
@@ -176,7 +207,7 @@ export default function Home() {
               <div className="px-5 gap-2 flex flex-row">
                 <label
                   htmlFor="model-select"
-                  className="block mb-1 text-sm font-medium"
+                  className="block mt-1 mr-2 text-sm font-medium"
                 >
                   Choose a Model:
                 </label>
@@ -271,7 +302,7 @@ export default function Home() {
             <CardTitle>Output</CardTitle>
             <CardDescription>Preview of your generated images</CardDescription>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-center">
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-center min-h-[280px]">
             {loading ? (
               <div className="flex flex-col items-center gap-4 w-full">
                 <p className="text-center text-gray-600 text-sm">
@@ -285,6 +316,10 @@ export default function Home() {
                   />
                 ))}
               </div>
+            ) : error ? (
+              <p className="text-center text-red-600 font-semibold">
+                ❌ {error}
+              </p>
             ) : imageURLs.length > 0 ? (
               imageURLs.map((url, index) => (
                 <Image
@@ -297,7 +332,12 @@ export default function Home() {
                   unoptimized
                 />
               ))
-            ) : null}
+            ) : (
+              <p className="text-center text-gray-500 italic">
+                🖼️ No images generated yet. Enter a prompt and hit
+                &quot;Generate Image&quot; to see your magic!
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
